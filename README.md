@@ -1,2 +1,2 @@
-# Modelaci-n-de-Sistemas
+# Modelacion-de-Sistemas
 Equipo 7, Modelación de sistemas multiagentes con gráficas computacionales

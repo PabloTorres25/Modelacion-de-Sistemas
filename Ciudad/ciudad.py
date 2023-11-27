@@ -7,6 +7,11 @@ from typing import Tuple, Any
 import numpy as np
 import random
 
+lista_paradasPrueba: Tuple[Tuple[int, int]] = ( 
+            (3,21), (5,3), (9,12), (10,6), (20,17), (21,22), (22,4)
+        )
+
+
 def traduccion(val1, val2):
         return val1 - 1, 24 - val2
 
@@ -319,7 +324,7 @@ class CiudadModel(Model):
         ancho = 24
         alto = 24
         # Autos
-        numero_autos = 17        # Maximo 17, uno en cada estacionamiento
+        numero_autos = 3        # Maximo 17, uno en cada estacionamiento
         numero_autobuses = 1    # Maximo 7, uno en cada parada
 
         # Mapa
@@ -568,16 +573,28 @@ class CiudadModel(Model):
         self.schedule.remove(agente)
         self.grid.remove_agent(agente)
     
-    def posicionesAgentesCoche(self):
-        result = []
+    def posicionesAgentes(self):
+        result = {"autos": []}
         for agent in self.schedule.agents:
             if isinstance(agent, Auto):
-                pos_trad2 = traduccion2(agent.pos[0], agent.pos[1])
-
-                result.append({"ID:": agent.unique_id, 
-                                "Origen:": pos_trad2,
-                                "Direccion: ": agent.direccion,
-                                "Alto/Siguiente:": agent.estado})
+                if agent.estado == "Saliendo Estacionamiento":  # JSON cuando de primeros pasos
+                    pos_trad2 = traduccion2(agent.pos[0], agent.pos[1])
+                    result["autos"].append({ "ID": agent.unique_id, "Origen": pos_trad2,
+                                            "Direccion": agent.direccion, "AltoSiguiente": agent.estado})
+                elif agent.estado == "Vehiculo enfrente":       # JSON cuando detecte un coche enfrente
+                    pos_trad2 = traduccion2(agent.pos[0], agent.pos[1])
+                    result["autos"].append({ "ID": agent.unique_id, "Origen": pos_trad2,
+                                            "Direccion": agent.direccion, "AltoSiguiente": agent.estado})
+                elif agent.estado == "En semaforo(rojo)":       # JSON cuando detecte un semáforo
+                    pos_trad2 = traduccion2(agent.pos[0], agent.pos[1])
+                    result["autos"].append({ "ID": agent.unique_id, "Origen": pos_trad2,
+                                            "Direccion": agent.direccion, "AltoSiguiente": agent.estado})
+                elif agent.estado == "Destino":                 # JSON cuando llegue al destino
+                    pos_trad2 = traduccion2(agent.pos[0], agent.pos[1])
+                    result["autos"].append({ "ID": agent.unique_id, "Origen": (0,0),
+                                            "Direccion": agent.direccion, "AltoSiguiente": agent.estado})
+                else:                                       # en movimiento 
+                    result["autos"].append({"ID": agent.unique_id})
         return result
 
 def agent_portrayal(agent):
@@ -681,12 +698,3 @@ class AutoInfoText(TextElement):
         info_html = ''.join([f'<div>{line}</div> <div>&nbsp;</div>' for line in info])
         return f'<div style="position: absolute; top: 70px; left: 10px; max-width: 300px; overflow: hidden; text-overflow: ellipsis;">{info_html}</div>'
 
-if __name__ == "__main__":
-    ...
-    # info_text = AutoInfoText()
-    # grid = CanvasGrid(agent_portrayal, 24, 24, 720, 720)
-    # server = ModularServer(CiudadModel,
-    #                     [grid, info_text],
-    #                     "Ciudad Model")
-    # server.port = 8521 # The default
-    # server.launch()

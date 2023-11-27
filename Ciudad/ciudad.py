@@ -167,7 +167,7 @@ class Auto(Agent):
             # Si hay una decisión
             elif tuple(pos_list) in self.model.list_eleccion_coor:
                 # Escoge
-                if self.direccion != self.girar_sin_opcion(pos_list, self.model.list_giros_t):
+                if self.direccion != self.girar_con_opciones(pos_list, self.model.list_giros_t):
                     if self.ya_elegi == False:
                         self.estado = "Eligiendo"
                         self.direccion = self.girar_con_opciones(pos_list, self.model.list_eleccion_t)
@@ -291,7 +291,7 @@ class Autobus(Agent):
             # Si hay una decisión
             elif tuple(pos_list) in self.model.list_eleccion_coor:
                 # Escoge
-                if self.direccion != self.girar_sin_opcion(pos_list, self.model.list_giros_t):
+                if self.direccion != self.girar_con_opciones(pos_list, self.model.list_giros_t):
                     if self.ya_elegi == False:
                         self.estado = "Eligiendo"
                         self.direccion = self.girar_con_opciones(pos_list, self.model.list_eleccion_t)

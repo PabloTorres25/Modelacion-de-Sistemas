@@ -7,11 +7,6 @@ from typing import Tuple, Any
 import numpy as np
 import random
 
-lista_paradasPrueba: Tuple[Tuple[int, int]] = ( 
-            (3,21), (5,3), (9,12), (10,6), (20,17), (21,22), (22,4)
-        )
-
-
 def traduccion(val1, val2):
         return val1 - 1, 24 - val2
 

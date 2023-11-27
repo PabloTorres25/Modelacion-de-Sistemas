@@ -149,16 +149,21 @@ class Auto(Agent):
                     else:   # Verde, Avanza
                         self.estado = "En semaforo(verde)"
                         moved = self.avanza_con_precaucion()
+                        
             # Si hay una vuelta
             elif tuple(pos_list) in self.model.list_giros_coor:
                 # Gira
-                if self.ya_gire == False:
-                    self.estado = "Girando"
-                    self.direccion = self.girar_sin_opcion(pos_list, self.model.list_giros_t)
-                    self.ya_gire = True
-                elif self.ya_gire == True: 
+                if self.direccion != self.girar_sin_opcion(pos_list, self.model.list_giros_t):
+                    if self.ya_gire == False:
+                        self.estado = "Girando"
+                        self.direccion = self.girar_sin_opcion(pos_list, self.model.list_giros_t)
+                        self.ya_gire = True
+                    elif self.ya_gire == True: 
+                        moved = self.avanza_con_precaucion()
+                        self.ya_gire = False
+                else:
                     moved = self.avanza_con_precaucion()
-                    self.ya_gire = False
+
             # Si hay una decisión
             elif tuple(pos_list) in self.model.list_eleccion_coor:
                 # Escoge

@@ -29,6 +29,7 @@ class Auto(Agent):
         self.llego_a_destino = False
         self.ya_gire = False
         self.ya_elegi = False
+        self.nueva_direccion = None
 
         self.destino_ala_vista = (
                 ((self.destino[0], self.destino[1] + 1), "Ab"),   # Arriba
@@ -153,32 +154,24 @@ class Auto(Agent):
             # Si hay una vuelta
             elif tuple(pos_list) in self.model.list_giros_coor:
                 # Gira
-                if self.direccion != self.girar_sin_opcion(pos_list, self.model.list_giros_t):
-                    if self.ya_gire == False:
-                        self.estado = "Girando"
-                        self.direccion = self.girar_sin_opcion(pos_list, self.model.list_giros_t)
-                        self.ya_gire = True
-                    elif self.ya_gire == True: 
-                        moved = self.avanza_con_precaucion()
-                        self.ya_gire = False
-                else:
+                # Si tu direccion ya es la que deberias tener solo avanza
+                if self.direccion == self.girar_sin_opcion(pos_list, self.model.list_giros_t):
                     moved = self.avanza_con_precaucion()
+                # Si tienes otra dirección, gira
+                # Ya en el siguiente step avanzaras
+                else:
+                    self.estado = "Girando"
+                    self.direccion = self.girar_sin_opcion(pos_list, self.model.list_giros_t)
 
             # Si hay una decisión
             elif tuple(pos_list) in self.model.list_eleccion_coor:
                 # Escoge
-                nueva_direccion = self.girar_con_opciones(pos_list, self.model.list_giros_t)
-                if self.direccion != nueva_direccion:
-                    if self.ya_elegi == False:
-                        self.estado = "Eligiendo"
-                        self.direccion = nueva_direccion
-                        self.ya_elegi = True
-                    elif self.ya_elegi == True:
-                        moved = self.avanza_con_precaucion()
-                        self.ya_elegi = False
-                else:
+                if self.estado == "Avanzando":
+                    self.estado = "Eligiendo" 
+                    self.direccion = self.girar_con_opciones(pos_list, self.model.list_eleccion_t)
+                elif self.estado == "Eligiendo":
                     moved = self.avanza_con_precaucion()
-            
+
             # Si no hay nada de lo anterior, avanza
             else:
                 moved = self.avanza_con_precaucion()
@@ -714,7 +707,7 @@ def get_auto_info(model):
     info = []
     for agent in model.schedule.agents:
         if isinstance(agent, Auto):
-            info.append(f"Auto ID: {agent.unique_id}, Origen: {agent.origen} Destino: {agent.destino_or}, Posición: {agent.pos_trad}, Estado: {agent.estado}")
+            info.append(f"Auto ID: {agent.unique_id}, Origen: {agent.origen} Destino: {agent.destino_or}, Posición: {agent.pos_trad}, Estado: {agent.estado}, Dirección: {agent.direccion}")
         elif isinstance(agent, Autobus):
             info.append(f"Autobus ID: {agent.unique_id},  Parada: {agent.indice_parada_actual}, Posición: {agent.pos_trad}, Dirección: {agent.direccion}, Estado: {agent.estado}")
     return info

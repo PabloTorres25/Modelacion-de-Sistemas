@@ -27,6 +27,8 @@ class Auto(Agent):
         self.estado = "Inicio"
         self.pos_trad = (self.pos)
         self.llego_a_destino = False
+        self.ya_gire = False
+        self.ya_elegi = False
 
         self.destino_ala_vista = (
                 ((self.destino[0], self.destino[1] + 1), "Ab"),   # Arriba
@@ -150,15 +152,23 @@ class Auto(Agent):
             # Si hay una vuelta
             elif tuple(pos_list) in self.model.list_giros_coor:
                 # Gira
-                self.estado = "celda de giro"
-                self.direccion = self.girar_sin_opcion(pos_list, self.model.list_giros_t)
-                moved = self.avanza_con_precaucion()
+                if self.ya_gire == False:
+                    self.estado = "Girando"
+                    self.direccion = self.girar_sin_opcion(pos_list, self.model.list_giros_t)
+                    self.ya_gire = True
+                elif self.ya_gire == True: 
+                    moved = self.avanza_con_precaucion()
+                    self.ya_gire = False
             # Si hay una decisión
             elif tuple(pos_list) in self.model.list_eleccion_coor:
                 # Escoge
-                self.estado = "celda de eleccion"
-                self.direccion = self.girar_con_opciones(pos_list, self.model.list_eleccion_t)
-                moved = self.avanza_con_precaucion()
+                if self.ya_elegi == False:
+                    self.estado = "Eligiendo"
+                    self.direccion = self.girar_con_opciones(pos_list, self.model.list_eleccion_t)
+                    self.ya_elegi = True
+                elif self.ya_elegi == True:
+                    moved = self.avanza_con_precaucion()
+                    self.ya_elegi = False
             # Si no hay nada de lo anterior, avanza
             else:
                 moved = self.avanza_con_precaucion()
@@ -319,8 +329,8 @@ class CiudadModel(Model):
         ancho = 24
         alto = 24
         # Autos
-        numero_autos = 3        # Maximo 17, uno en cada estacionamiento
-        numero_autobuses = 1    # Maximo 7, uno en cada parada
+        numero_autos = 1        # Maximo 17, uno en cada estacionamiento
+        numero_autobuses = 0    # Maximo 7, uno en cada parada
 
         # Mapa
         lista_edificios: Tuple[Tuple[Tuple[int, int], Tuple[int, int]]] = (

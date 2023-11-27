@@ -149,7 +149,7 @@ class Auto(Agent):
                     else:   # Verde, Avanza
                         self.estado = "En semaforo(verde)"
                         moved = self.avanza_con_precaucion()
-                        
+
             # Si hay una vuelta
             elif tuple(pos_list) in self.model.list_giros_coor:
                 # Gira
@@ -167,13 +167,17 @@ class Auto(Agent):
             # Si hay una decisión
             elif tuple(pos_list) in self.model.list_eleccion_coor:
                 # Escoge
-                if self.ya_elegi == False:
-                    self.estado = "Eligiendo"
-                    self.direccion = self.girar_con_opciones(pos_list, self.model.list_eleccion_t)
-                    self.ya_elegi = True
-                elif self.ya_elegi == True:
+                if self.direccion != self.girar_sin_opcion(pos_list, self.model.list_giros_t):
+                    if self.ya_elegi == False:
+                        self.estado = "Eligiendo"
+                        self.direccion = self.girar_con_opciones(pos_list, self.model.list_eleccion_t)
+                        self.ya_elegi = True
+                    elif self.ya_elegi == True:
+                        moved = self.avanza_con_precaucion()
+                        self.ya_elegi = False
+                else:
                     moved = self.avanza_con_precaucion()
-                    self.ya_elegi = False
+            
             # Si no hay nada de lo anterior, avanza
             else:
                 moved = self.avanza_con_precaucion()
@@ -191,6 +195,8 @@ class Autobus(Agent):
         self.direccion = direccion
         self.estado = "Inicio"
         self.pos_trad = (self.pos)
+        self.ya_gire = False
+        self.ya_elegi = False
         
         self.movimientos_direccion = {
             "Ar": (0, 1),   # Arriba
@@ -267,22 +273,34 @@ class Autobus(Agent):
                     else:   # Verde, Avanza
                         self.estado = "En semaforo(verde)"
                         moved = self.avanza_con_precaucion()
-
+            
             # Si hay una vuelta
             elif tuple(pos_list) in self.model.list_giros_coor:
                 # Gira
-                self.estado = "celda de giro"
-                self.direccion = self.girar_sin_opcion(pos_list, self.model.list_giros_t)
-                moved = self.avanza_con_precaucion()
+                if self.direccion != self.girar_sin_opcion(pos_list, self.model.list_giros_t):
+                    if self.ya_gire == False:
+                        self.estado = "Girando"
+                        self.direccion = self.girar_sin_opcion(pos_list, self.model.list_giros_t)
+                        self.ya_gire = True
+                    elif self.ya_gire == True: 
+                        moved = self.avanza_con_precaucion()
+                        self.ya_gire = False
+                else:
+                    moved = self.avanza_con_precaucion()
+
             # Si hay una decisión
             elif tuple(pos_list) in self.model.list_eleccion_coor:
                 # Escoge
-                self.estado = "celda de eleccion"
-                self.direccion = self.girar_con_opciones(pos_list, self.model.list_eleccion_t)
-                moved = self.avanza_con_precaucion()
-            # Si no hay nada de lo anterior, avanza
-            else:
-                moved = self.avanza_con_precaucion()
+                if self.direccion != self.girar_sin_opcion(pos_list, self.model.list_giros_t):
+                    if self.ya_elegi == False:
+                        self.estado = "Eligiendo"
+                        self.direccion = self.girar_con_opciones(pos_list, self.model.list_eleccion_t)
+                        self.ya_elegi = True
+                    elif self.ya_elegi == True:
+                        moved = self.avanza_con_precaucion()
+                        self.ya_elegi = False
+                else:
+                    moved = self.avanza_con_precaucion()
 
 class Edificio(Agent):
     def __init__(self, unique_id, model):

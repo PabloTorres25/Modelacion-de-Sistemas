@@ -22,7 +22,7 @@ def informacionAgente():
 
 if __name__ == "__main__":
     modelo = CiudadModel()
-    #app.run(debug = True)
+    # app.run(debug = True)
 
 
     # for paso in range(100):

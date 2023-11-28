@@ -137,9 +137,11 @@ class Auto(Agent):
                             moved = self.avanza_con_precaucion()
                         # Si no, Avanza hacia el destino
                         else:
-                            self.estado = "vista destino, llendo"
-                            self.direccion = dir
-                            moved = self.avanza_con_precaucion()
+                            if self.estado == "Avanzando":
+                                self.estado = "Girando"
+                                self.direccion = dir
+                            elif self.estado == "Girando":  
+                                moved = self.avanza_con_precaucion()
 
             # Si hay un semáforo
             elif semaforo_agents:
@@ -167,7 +169,7 @@ class Auto(Agent):
             elif tuple(pos_list) in self.model.list_eleccion_coor:
                 # Escoge
                 if self.estado == "Avanzando":
-                    self.estado = "Eligiendo" 
+                    self.estado = "Girando" 
                     self.direccion = self.girar_con_opciones(pos_list, self.model.list_eleccion_t)
                 elif self.estado == "Eligiendo":
                     moved = self.avanza_con_precaucion()
@@ -288,7 +290,7 @@ class Autobus(Agent):
                 nueva_direccion = self.girar_con_opciones(pos_list, self.model.list_giros_t)
                 if self.direccion != nueva_direccion:
                     if self.ya_elegi == False:
-                        self.estado = "Eligiendo"
+                        self.estado = "Girando"
                         self.direccion = nueva_direccion
                         self.ya_elegi = True
                     elif self.ya_elegi == True:

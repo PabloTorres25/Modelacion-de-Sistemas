@@ -347,7 +347,7 @@ class CiudadModel(Model):
         ancho = 24
         alto = 24
         # Autos
-        numero_autos = 1        # Maximo 17, uno en cada estacionamiento
+        numero_autos = 17        # Maximo 17, uno en cada estacionamiento
         numero_autobuses = 0    # Maximo 7, uno en cada parada
 
         # Mapa
@@ -601,19 +601,15 @@ class CiudadModel(Model):
         for agent in self.schedule.agents:
             if isinstance(agent, Auto):
                 if agent.estado == "Saliendo Estacionamiento":  # JSON cuando de primeros pasos
-                    pos_trad2 = traduccion2(agent.pos[0], agent.pos[1])
-                    result["autos"].append({ "ID": agent.unique_id, "Origen": pos_trad2,
+                    result["autos"].append({ "ID": agent.unique_id, "Origen": agent.pos,
                                             "Direccion": agent.direccion, "AltoSiguiente": agent.estado})
                 elif agent.estado == "Vehiculo enfrente":       # JSON cuando detecte un coche enfrente
-                    pos_trad2 = traduccion2(agent.pos[0], agent.pos[1])
-                    result["autos"].append({ "ID": agent.unique_id, "Origen": pos_trad2,
+                    result["autos"].append({ "ID": agent.unique_id, "Origen": agent.pos,
                                             "Direccion": agent.direccion, "AltoSiguiente": agent.estado})
                 elif agent.estado == "En semaforo(rojo)":       # JSON cuando detecte un semáforo
-                    pos_trad2 = traduccion2(agent.pos[0], agent.pos[1])
-                    result["autos"].append({ "ID": agent.unique_id, "Origen": pos_trad2,
+                    result["autos"].append({ "ID": agent.unique_id, "Origen": agent.pos,
                                             "Direccion": agent.direccion, "AltoSiguiente": agent.estado})
                 elif agent.estado == "Destino":                 # JSON cuando llegue al destino
-                    pos_trad2 = traduccion2(agent.pos[0], agent.pos[1])
                     result["autos"].append({ "ID": agent.unique_id, "Origen": (0,0),
                                             "Direccion": agent.direccion, "AltoSiguiente": agent.estado})
                 else:                                       # en movimiento 

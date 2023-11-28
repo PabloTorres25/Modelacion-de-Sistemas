@@ -22,7 +22,7 @@ def informacionAgente():
 
 if __name__ == "__main__":
     modelo = CiudadModel()
-    app.run(debug = True)
+    #app.run(debug = True)
 
 
     # for paso in range(100):
@@ -33,10 +33,10 @@ if __name__ == "__main__":
         
     
 
-    # info_text = AutoInfoText()
-    # grid = CanvasGrid(agent_portrayal, 24, 24, 720, 720)
-    # server = ModularServer(CiudadModel,
-    #                     [grid, info_text],
-    #                     "Ciudad Model")
-    # server.port = 8521 # The default
-    # server.launch()
+    info_text = AutoInfoText()
+    grid = CanvasGrid(agent_portrayal, 24, 24, 720, 720)
+    server = ModularServer(CiudadModel,
+                        [grid, info_text],
+                        "Ciudad Model")
+    server.port = 8521 # The default
+    server.launch()

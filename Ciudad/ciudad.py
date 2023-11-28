@@ -137,11 +137,9 @@ class Auto(Agent):
                             moved = self.avanza_con_precaucion()
                         # Si no, Avanza hacia el destino
                         else:
-                            if self.estado == "Avanzando":
-                                self.estado = "Girando"
-                                self.direccion = dir
-                            elif self.estado == "Girando":  
-                                moved = self.avanza_con_precaucion()
+                            self.estado = "vista destino, llendo"
+                            self.direccion = dir
+                            moved = self.avanza_con_precaucion()
 
             # Si hay un semáforo
             elif semaforo_agents:
@@ -169,7 +167,7 @@ class Auto(Agent):
             elif tuple(pos_list) in self.model.list_eleccion_coor:
                 # Escoge
                 if self.estado == "Avanzando":
-                    self.estado = "Girando" 
+                    self.estado = "Eligiendo" 
                     self.direccion = self.girar_con_opciones(pos_list, self.model.list_eleccion_t)
                 elif self.estado == "Eligiendo":
                     moved = self.avanza_con_precaucion()
@@ -290,7 +288,7 @@ class Autobus(Agent):
                 nueva_direccion = self.girar_con_opciones(pos_list, self.model.list_giros_t)
                 if self.direccion != nueva_direccion:
                     if self.ya_elegi == False:
-                        self.estado = "Girando"
+                        self.estado = "Eligiendo"
                         self.direccion = nueva_direccion
                         self.ya_elegi = True
                     elif self.ya_elegi == True:
@@ -349,7 +347,7 @@ class CiudadModel(Model):
         ancho = 24
         alto = 24
         # Autos
-        numero_autos = 1        # Maximo 17, uno en cada estacionamiento
+        numero_autos = 7        # Maximo 17, uno en cada estacionamiento
         numero_autobuses = 0    # Maximo 7, uno en cada parada
 
         # Mapa

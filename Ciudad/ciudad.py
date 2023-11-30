@@ -189,8 +189,7 @@ class Autobus(Agent):
         self.direccion = direccion
         self.estado = "Inicio"
         self.pos_trad = (self.pos)
-        self.ya_gire = False
-        self.ya_elegi = False
+        self.step_quieto = 0 
         
         self.movimientos_direccion = {
             "Ar": (0, 1),   # Arriba
@@ -271,31 +270,27 @@ class Autobus(Agent):
             # Si hay una vuelta
             elif tuple(pos_list) in self.model.list_giros_coor:
                 # Gira
-                if self.direccion != self.girar_sin_opcion(pos_list, self.model.list_giros_t):
-                    if self.ya_gire == False:
-                        self.estado = "Girando"
-                        self.direccion = self.girar_sin_opcion(pos_list, self.model.list_giros_t)
-                        self.ya_gire = True
-                    elif self.ya_gire == True: 
-                        moved = self.avanza_con_precaucion()
-                        self.ya_gire = False
-                else:
+                # Si tu direccion ya es la que deberias tener solo avanza
+                if self.direccion == self.girar_sin_opcion(pos_list, self.model.list_giros_t):
                     moved = self.avanza_con_precaucion()
+                # Si tienes otra dirección, gira
+                # Ya en el siguiente step avanzaras
+                else:
+                    self.estado = "Girando"
+                    self.direccion = self.girar_sin_opcion(pos_list, self.model.list_giros_t)
 
             # Si hay una decisión
             elif tuple(pos_list) in self.model.list_eleccion_coor:
                 # Escoge
-                nueva_direccion = self.girar_con_opciones(pos_list, self.model.list_giros_t)
-                if self.direccion != nueva_direccion:
-                    if self.ya_elegi == False:
-                        self.estado = "Eligiendo"
-                        self.direccion = nueva_direccion
-                        self.ya_elegi = True
-                    elif self.ya_elegi == True:
-                        moved = self.avanza_con_precaucion()
-                        self.ya_elegi = False
+                if self.step_quieto == 0:
+                    self.step_quieto += 1
+                    self.estado = "Girando"
+                    self.direccion = self.girar_con_opciones(pos_list, self.model.list_eleccion_t)
                 else:
+                    self.step_quieto = 0
                     moved = self.avanza_con_precaucion()
+            else:
+                moved = self.avanza_con_precaucion()
 
 class Edificio(Agent):
     def __init__(self, unique_id, model):
@@ -348,7 +343,7 @@ class CiudadModel(Model):
         alto = 24
         # Autos
         numero_autos = 17       # Maximo 17, uno en cada estacionamiento
-        numero_autobuses = 0    # Maximo 7, uno en cada parada
+        numero_autobuses = 1    # Maximo 7, uno en cada parada
 
         # Mapa
         lista_edificios: Tuple[Tuple[Tuple[int, int], Tuple[int, int]]] = (

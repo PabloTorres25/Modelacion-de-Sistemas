@@ -635,11 +635,14 @@ class CiudadModel(Model):
                 elif agent.estado == "En semaforo(rojo)":       # JSON cuando detecte un semáforo
                     result["autos"].append({ "ID": agent.unique_id, "Origen": agent.pos,
                                             "Direccion": agent.direccion, "AltoSiguiente": agent.estado})
+                elif agent.estado == "Girando":       # JSON cuando detecte un semáforo
+                    result["autos"].append({ "ID": agent.unique_id, "Origen": agent.pos,
+                                            "Direccion": agent.direccion, "AltoSiguiente": agent.estado})
                 elif agent.estado == "Destino":                 # JSON cuando llegue al destino
                     result["autos"].append({ "ID": agent.unique_id, "Origen": (0,0),
                                             "Direccion": agent.direccion, "AltoSiguiente": agent.estado})
                 else:                                       # en movimiento 
-                    result["autos"].append({"ID": agent.unique_id})
+                    result["autos"].append({"ID": agent.unique_id, "Direccion": agent.direccion, "AltoSiguiente": agent.estado})
         return result
 
 def agent_portrayal(agent):

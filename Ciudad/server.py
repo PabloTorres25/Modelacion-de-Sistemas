@@ -22,21 +22,4 @@ def informacionAgente():
 
 if __name__ == "__main__":
     modelo = CiudadModel()
-    # app.run(debug = True)
-
-
-    # for paso in range(100):
-    #     modelo.step()
-    #     positions = modelo.posicionesAgentes()
-    #     json_string = json.dumps(positions)
-    #     print(json_string)
-        
-    
-
-    info_text = AutoInfoText()
-    grid = CanvasGrid(agent_portrayal, 24, 24, 720, 720)
-    server = ModularServer(CiudadModel,
-                        [grid, info_text],
-                        "Ciudad Model")
-    server.port = 8521 # The default
-    server.launch()
+    app.run(debug = True)
